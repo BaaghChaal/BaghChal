@@ -68,8 +68,7 @@ Anyone who not just want to play the game but also wants to play with the source
 
 # GLIMPSE
 
-
-
+![img](https://github.com/BaaghChaal/BaghChal/blob/main/content/homescreen.png)
 
 
 
