@@ -4,7 +4,9 @@ Game::Game() :
 	piece_selected(false),
 	GOATS(20),
 	goat_eating_move(false),
+	winner(-1),
 	GOATS_KILLED(0)
+
 {
 	goat_no = 0;
 	turn = 0;
@@ -22,7 +24,12 @@ Game::Game() :
 	tigers[3].set_position(highx, highy);
 
 	tigers_ptr = &tigers;
-	std::cout << "adress of tiger1 " << &tigers[0] << '\n';
+
+	//info text
+	goats_ate_text.create("GOATS KILLED: 0", 45, 145, sf::Color::Red, 30, "content/home_font.ttf");
+	goats_in_hand_text.create("GOATS IN HAND: 20", 35, 230, sf::Color::Red, 30, "content/home_font.ttf");
+	turn_text.create("GOAT", 910, 510, sf::Color::Green, 40, "content/home_font.ttf");
+	turn_header_text.create("Turn", 890, 400, sf::Color::Red, 70, "content/home_font.ttf");
 }
 
 void Game::calc_possible_moves(sf::Vector2f point)
@@ -122,7 +129,7 @@ void Game::select_goat(int x, int y)
 	{
 		goat_no++;
 		sf::Vector2i point = nearest_point(x, y);
-		if (!tiger_there(point.x, point.y) and !goat_there(point.x, point.y))
+		if (!tiger_there(point.x, point.y) and !goat_there(point.x, point.y) and point != sf::Vector2i(0, 0))
 		{
 			Goat* goat = new Goat;
 
@@ -295,6 +302,7 @@ void Game::move_piece(int x, int y)
 
 	// check win
 	win();
+	update_info_board();
 }
 
 bool Game::valid_click(int x, int y)
@@ -391,12 +399,29 @@ int Game::get_turn()
 	return turn;
 }
 
+void Game::update_info_board()
+{
+	//to convert numbers to string;
+	std::ostringstream text;
+	text << GOATS_KILLED;
+	std::string head = "GOATS KILLED: ";
+	goats_ate_text.set_text(head + text.str());
+	std::ostringstream text2;
+	text2 << 20 - GOATS_KILLED;
+	head = "GOATS IN HAND: ";
+	goats_in_hand_text.set_text(head + text2.str());
+
+	std::string t = turn == 1 ? "TIGER" : "GOAT";
+	turn_text.set_text(t);
+}
+
 void Game::win()
 {
 	//tiger win check
 	if (GOATS_KILLED == 5)
 	{
 		std::cout << "TIGERS WON\n";
+		winner = 1;
 	}
 
 	//goat win check
@@ -413,6 +438,7 @@ void Game::win()
 	if (possible_moves.size() == 0)
 	{
 		std::cout << "GOATS WON\n";
+		winner = 0;
 	}
 
 	reset_color_goats();
@@ -445,4 +471,22 @@ void Game::move_tiger_from_ai(sf::Vector2f tiger_pos, sf::Vector2f new_pos)
 bool Game::get_piece_selected()
 {
 	return piece_selected;
+}
+
+void Game::reset()
+{
+	goats.clear();
+	possible_moves.clear();
+	goat_eating_moves.clear();
+	turn = 0;
+	tigers[0].set_position(lowx, lowy);
+	tigers[1].set_position(highx, lowy);
+	tigers[2].set_position(lowx, highy);
+	tigers[3].set_position(highx, highy);
+	winner = -1;
+	GOATS_KILLED = 0;
+	goat_eating_move = false;
+	piece_selected = false;
+	goat_no = 0;
+	update_info_board();
 }

@@ -17,3 +17,7 @@ void Audio::pause()
 {
 	sound_s.pause();
 }
+void Audio::stop()
+{
+	sound_s.stop();
+}

@@ -11,5 +11,6 @@ public:
 	Audio(std::string, float);
 	void play();
 	void pause();
+	void stop();
 };
 #endif

@@ -2,6 +2,7 @@
 #define BAAGCHAAL_GAME
 #include "includes/board.h"
 #include "includes/goat.h"
+#include "includes/text.h"
 #include "includes/tiger.h"
 #include <array>
 #include <iterator>
@@ -12,6 +13,9 @@ class Game : public sf::Drawable
 private:
 	Board board;
 	bool piece_selected;
+
+	//info texts
+	Text goats_ate_text, turn_text, turn_header_text, goats_in_hand_text;
 
 	std::array<Tiger, 4> tigers;
 	Tiger* tiger_pointer;
@@ -31,6 +35,10 @@ private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		target.draw(board, states);
+		target.draw(goats_ate_text, states);
+		target.draw(goats_in_hand_text, states);
+		target.draw(turn_text, states);
+		target.draw(turn_header_text, states);
 		for (unsigned int i = 0; i < tigers.size(); i++)
 		{
 			target.draw(tigers[i], states);
@@ -48,6 +56,7 @@ private:
 	}
 
 public:
+	int winner; //1 tiger 0 goat -1 none
 	std::array<Tiger, 4>* tigers_ptr;
 	sf::Vector2i goat_pos4_ai;
 	void move_tiger_from_ai(sf::Vector2f tiger_pos, sf::Vector2f new_pos);
@@ -72,8 +81,10 @@ public:
 	void delete_goat(sf::Vector2i goat_pos);
 	void win();
 	int get_turn();
+	void update_info_board();
 	void reset_color_goats();
 	bool get_piece_selected();
+	void reset();
 };
 
 #endif
