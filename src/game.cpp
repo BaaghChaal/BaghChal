@@ -38,6 +38,7 @@ Game::Game() :
 
 void Game::calc_possible_moves(sf::Vector2f point)
 {
+	//For calculationg valid moves for game pieces
 	int px = point.x, py = point.y, w = width, p = 1, q = 1;
 	int bitx = ((px - lowx) / w) % 2 == 0 ? 0 : 1;
 	int bity = ((py - lowy) / w) % 2 == 0 ? 0 : 1;
@@ -112,7 +113,7 @@ void Game::possible_moves_utility(int x, int y) //x,y is point of goat on possib
 
 void Game::select_tiger(int x, int y)
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++) //Looping through each tiger piece to select the clicked tiger piece
 	{
 		if (tigers[i].contains_point(x, y))
 		{
@@ -149,7 +150,7 @@ void Game::select_goat(int x, int y)
 	//select goat
 	else
 	{
-		for (Goat* goat : goats)
+		for (Goat* goat : goats) //Looping through each goat piece to select the clicked goat piece
 		{
 			if (goat->contains_point(x, y))
 			{
@@ -168,6 +169,8 @@ void Game::eat_goat_check(int x1, int y1, int x2, int y2)
 {
 	int w = width;
 	int slope, px, py;
+
+	//To find eating moves for the selected tiger
 
 	slope = std::isinf((y2 - y1) / (float)(x2 - x1)) ? 2 : (y2 - y1) / (x2 - x1);
 	if (slope == 0 and x2 > x1)
@@ -239,7 +242,7 @@ void Game::goat_eat_check_utility(int x, int y, int x2, int y2)
 
 void Game::create_circles()
 {
-	for (std::vector<int> x : possible_moves)
+	for (std::vector<int> x : possible_moves) // To make circles representing the possible moves of the selected piece
 	{
 		sf::CircleShape* circle = new sf::CircleShape(10);
 		circle->setOrigin(10, 10);
@@ -250,7 +253,7 @@ void Game::create_circles()
 	}
 }
 
-void Game::move_piece(int x, int y)
+void Game::move_piece(int x, int y) //to check the validation of moving piece
 {
 	sf::Vector2i point = nearest_point(x, y);
 	if (get_turn() == 1 and valid_click(point.x, point.y) and point != sf::Vector2i(0, 0))
@@ -382,10 +385,10 @@ void Game::change_goat_red(int x, int y)
 	}
 }
 
-void Game::delete_goat(sf::Vector2i goat_pos)
+void Game::delete_goat(sf::Vector2i goat_pos) //to delete the captured goat piece from the window
 {
 	std::vector<Goat*>::iterator it;
-	for (it = goats.begin(); it != goats.end();)
+	for (it = goats.begin(); it != goats.end();) //Looping through all the goats
 	{
 		if ((*it)->get_position() == (sf::Vector2f)(goat_pos))
 		{
@@ -407,7 +410,7 @@ int Game::get_turn()
 	return turn;
 }
 
-void Game::update_info_board()
+void Game::update_info_board() //handles all the information regarding the state of the game
 {
 	//to convert numbers to string;
 	std::ostringstream text;
@@ -424,7 +427,7 @@ void Game::update_info_board()
 	turn_text.set_text(t);
 }
 
-void Game::play_movement_audio()
+void Game::play_movement_audio() //To play audio when a game piece is moved
 {
 	if (turn)
 	{
@@ -504,7 +507,7 @@ bool Game::get_piece_selected()
 	return piece_selected;
 }
 
-void Game::reset()
+void Game::reset() //to reset the game when back or home button is clicked
 {
 	goats.clear();
 	possible_moves.clear();

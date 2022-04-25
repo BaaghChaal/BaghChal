@@ -157,7 +157,6 @@ public:
 		}
 
 		cout << "initial board\n";
-		// print_board(board);
 
 		int best_score = -10000;
 		int best_move[2] = { 100, 100 }; //random move for now
@@ -176,7 +175,7 @@ public:
 
 			for (auto move : t_moves)
 			{
-				// cout << "initial move: " << move[0] << ',' << move[1] << endl;
+
 				tiger_pos = denormalize(move);
 				board[t_pos[0]][t_pos[1]] = '-'; //working with tiger at each position
 				board[move[0]][move[1]] = 'T';

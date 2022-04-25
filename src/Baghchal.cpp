@@ -11,7 +11,7 @@ Baghchal::Baghchal()
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
-void Baghchal::run_home()
+void Baghchal::run_home() //Home page
 {
 	Home home;
 	Audio audio("content/deep.wav", 30);
@@ -27,7 +27,7 @@ void Baghchal::run_home()
 		{
 			if (event.type == sf::Event::Closed)
 			{
-				// std::cout << "Key is pressed" << std::endl;
+
 				window.close();
 			}
 
@@ -42,7 +42,6 @@ void Baghchal::run_home()
 				{
 
 					winner = run_game(false);
-					// std::cout << audio_temp.getStatus();
 				}
 				if (t2.mouse_clicked(pos))
 				{
@@ -68,7 +67,7 @@ void Baghchal::run_home()
 	}
 }
 
-int Baghchal::run_game(bool aii)
+int Baghchal::run_game(bool aii) //Game page if aii - false (MUlTIPLAYER) if aii - true (VS TIGER)
 {
 	game.winner = -1;
 	Audio audio_temp("content/click.wav", 20);
@@ -140,7 +139,7 @@ int Baghchal::run_game(bool aii)
 	return -1;
 }
 
-int Baghchal::win_screen(int winner)
+int Baghchal::win_screen(int winner) //Win screen
 {
 	sf::Font font;
 	font.loadFromFile("content/test.ttf");
