@@ -1,5 +1,6 @@
 #ifndef BAAGCHAAL_GAME
 #define BAAGCHAAL_GAME
+#include "includes/Audio.h"
 #include "includes/board.h"
 #include "includes/goat.h"
 #include "includes/text.h"
@@ -16,7 +17,7 @@ private:
 
 	//info texts
 	Text goats_ate_text, turn_text, turn_header_text, goats_in_hand_text;
-
+	Audio tiger_audio, goat_audio;
 	std::array<Tiger, 4> tigers;
 	Tiger* tiger_pointer;
 
@@ -57,12 +58,12 @@ private:
 
 public:
 	int winner; //1 tiger 0 goat -1 none
+	int goats_in_hand;
 	std::array<Tiger, 4>* tigers_ptr;
 	sf::Vector2i goat_pos4_ai;
+	sf::Vector2f goat_pos4_ai_delete_goat_pos;
 	void move_tiger_from_ai(sf::Vector2f tiger_pos, sf::Vector2f new_pos);
 	int turn; //0-goat, 1-tiger
-	// std::vector<Goat*> goats;
-	// std::array<Tiger, 4> tigers;
 	int GOATS_KILLED;
 	Game();
 	void calc_possible_moves(sf::Vector2f point);
@@ -82,6 +83,8 @@ public:
 	void win();
 	int get_turn();
 	void update_info_board();
+	void play_movement_audio();
+	void stop_movement_audio();
 	void reset_color_goats();
 	bool get_piece_selected();
 	void reset();

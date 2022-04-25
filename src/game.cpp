@@ -9,6 +9,7 @@ Game::Game() :
 
 {
 	goat_no = 0;
+	goats_in_hand = 20;
 	turn = 0;
 	sf::FloatRect grid = board.grid_dimensions();
 	width = 100;
@@ -30,6 +31,9 @@ Game::Game() :
 	goats_in_hand_text.create("GOATS IN HAND: 20", 35, 230, sf::Color::Red, 30, "content/home_font.ttf");
 	turn_text.create("GOAT", 910, 510, sf::Color::Green, 40, "content/home_font.ttf");
 	turn_header_text.create("Turn", 890, 400, sf::Color::Red, 70, "content/home_font.ttf");
+	//audio
+	tiger_audio.create("content/Tiger_game_voice.wav", 40);
+	goat_audio.create("content/Goat_game_voice.wav", 40);
 }
 
 void Game::calc_possible_moves(sf::Vector2f point)
@@ -127,15 +131,16 @@ void Game::select_goat(int x, int y)
 	//goat placement for initial moves
 	if ((unsigned)goat_no < GOATS)
 	{
-		goat_no++;
+
 		sf::Vector2i point = nearest_point(x, y);
 		if (!tiger_there(point.x, point.y) and !goat_there(point.x, point.y) and point != sf::Vector2i(0, 0))
 		{
+			goat_no++;
 			Goat* goat = new Goat;
-
 			goats.push_back(goat);
 			//new line
 			goat_pointer = goat;
+			goats_in_hand--;
 			possible_moves.push_back({ point.x, point.y }); //inorder to make valid_click  while placing goat
 			move_piece(x, y);
 		}
@@ -248,7 +253,7 @@ void Game::create_circles()
 void Game::move_piece(int x, int y)
 {
 	sf::Vector2i point = nearest_point(x, y);
-	if (get_turn() == 1 and valid_click(point.x, point.y))
+	if (get_turn() == 1 and valid_click(point.x, point.y) and point != sf::Vector2i(0, 0))
 	{
 		if (goat_eating_move)
 		{
@@ -267,6 +272,7 @@ void Game::move_piece(int x, int y)
 		tiger_pointer->set_position(point.x, point.y);
 		tiger_pointer->reset_color();
 		piece_selected = false;
+		play_movement_audio();
 		turn = 0;
 		possible_moves.clear();
 		circles.clear();
@@ -282,9 +288,11 @@ void Game::move_piece(int x, int y)
 	}
 	else if (get_turn() == 0 and valid_click(point.x, point.y))
 	{
+		goat_pos4_ai_delete_goat_pos = goat_pointer->get_position();
 		goat_pointer->set_position(point.x, point.y);
 		goat_pointer->reset_color();
 		piece_selected = false;
+		play_movement_audio();
 		turn = 1;
 		goat_pos4_ai = (sf::Vector2i(point.x, point.y));
 		possible_moves.clear();
@@ -403,16 +411,37 @@ void Game::update_info_board()
 {
 	//to convert numbers to string;
 	std::ostringstream text;
+
 	text << GOATS_KILLED;
 	std::string head = "GOATS KILLED: ";
 	goats_ate_text.set_text(head + text.str());
 	std::ostringstream text2;
-	text2 << 20 - GOATS_KILLED;
+	text2 << goats_in_hand;
 	head = "GOATS IN HAND: ";
 	goats_in_hand_text.set_text(head + text2.str());
 
 	std::string t = turn == 1 ? "TIGER" : "GOAT";
 	turn_text.set_text(t);
+}
+
+void Game::play_movement_audio()
+{
+	if (turn)
+	{
+		tiger_audio.play();
+	}
+	else
+	{
+		goat_audio.play();
+	}
+}
+
+void Game::stop_movement_audio()
+{
+	sf::Time t = sf::seconds(1.5);
+	sf::sleep(t);
+	tiger_audio.stop();
+	goat_audio.stop();
 }
 
 void Game::win()
@@ -422,6 +451,7 @@ void Game::win()
 	{
 		std::cout << "TIGERS WON\n";
 		winner = 1;
+		turn = -1;
 	}
 
 	//goat win check
@@ -439,6 +469,7 @@ void Game::win()
 	{
 		std::cout << "GOATS WON\n";
 		winner = 0;
+		turn = -1;
 	}
 
 	reset_color_goats();
@@ -487,6 +518,7 @@ void Game::reset()
 	GOATS_KILLED = 0;
 	goat_eating_move = false;
 	piece_selected = false;
+	goats_in_hand = 20;
 	goat_no = 0;
 	update_info_board();
 }
